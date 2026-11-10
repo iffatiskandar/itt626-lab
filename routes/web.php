@@ -26,6 +26,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
     Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
 
+    Route::get('/timetables', [App\Http\Controllers\TimetableController::class, 'index'])->name('timetables.index');
+    Route::get('/timetables/create', [App\Http\Controllers\TimetableController::class, 'create'])->name('timetables.create');
+    Route::post('/timetables', [App\Http\Controllers\TimetableController::class, 'store'])->name('timetables.store (http://timetables.store/)');
+    Route::get('/timetables/{timetable}', [App\Http\Controllers\TimetableController::class, 'show'])->name('timetables.show (http://timetables.show/)');
+    Route::get('/timetables/{timetable}/edit', [App\Http\Controllers\TimetableController::class, 'edit'])->name('timetables.edit');
+    Route::put('/timetables/{timetable}', [App\Http\Controllers\TimetableController::class, 'update'])->name('timetables.update');
+    Route::delete('/timetables/{timetable}', [App\Http\Controllers\TimetableController::class, 'destroy'])->name('timetables.destroy');
+
     Route::resource('subjects', SubjectController::class);
     Route::resource('halls', HallController::class);
     Route::resource('days', DayController::class);
