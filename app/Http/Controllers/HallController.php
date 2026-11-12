@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Halls;
+use App\Models\Hall;
 use App\Models\Timetable;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -14,8 +14,8 @@ class HallController extends Controller
         return view('master.index', [
             'title' => 'Halls',
             'route' => 'halls',
-            'columns' => ['hall_code' => 'Code', 'hall_name' => 'Hall', 'lecturer_name' => 'Lecturer'],
-            'rows' => Hall::orderBy('hall_code')->get(),
+            'columns' => ['lecture_hall_name' => 'Code', 'lecture_hall_place' => 'Place'],
+            'rows' => Hall::orderBy('lecture_hall_name')->get(),
         ]);
     }
 
@@ -57,9 +57,8 @@ class HallController extends Controller
     private function rules(?Hall $hall = null): array
     {
         return [
-            'hall_code' => ['required', 'string', 'max:20', Rule::unique('halls', 'hall_code')->ignore($hall)],
-            'hall_name' => ['required', 'string', 'max:255'],
-            'lecturer_name' => ['nullable', 'string', 'max:255'],
+            'lecture_hall_name' => ['required', 'string', 'max:255', Rule::unique('halls', 'lecture_hall_name')->ignore($hall)],
+            'lecture_hall_place' => ['required', 'string', 'max:255'],
         ];
     }
 
@@ -72,9 +71,8 @@ class HallController extends Controller
             'method' => $hall ? 'PUT' : 'POST',
             'record' => $hall,
             'fields' => [
-                ['name' => 'hall_code', 'label' => 'Hall code', 'required' => true],
-                ['name' => 'hall_name', 'label' => 'Hall name', 'required' => true],
-                ['name' => 'lecturer_name', 'label' => 'Lecturer'],
+                ['name' => 'lecture_hall_name', 'label' => 'Hall code', 'required' => true],
+                ['name' => 'lecture_hall_place', 'label' => 'Place', 'required' => true],
             ],
         ]);
     }
