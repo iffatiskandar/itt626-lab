@@ -2,100 +2,109 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Day;
+use App\Models\Group;
+use App\Models\Hall;
+use App\Models\Subject;
 use App\Models\Timetable;
 use Illuminate\Http\Request;
-use App\Models\Subject;
-use App\Models\Day;
-use App\Models\Hall;
-use App\Models\Group;
+use Illuminate\Validation\ValidationException;
 
 class TimetableController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return view('timetables.index', [
+            'days' => Day::orderBy('id')->get(),
+            'timetables' => Timetable::with(['subject', 'hall', 'group', 'user'])
+                ->orderBy('time_from')
+                ->get()
+                ->groupBy('day_id'),
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $timetables = Timetable::with('day', 'subject', 'hall');
-
-        $days = Day::pluck('day_name', 'id');
-
-        $halls = Hall::pluck('lecture_hall_name', 'id');
-
-        $subjects = Subject::pluck('subject_name', 'id', 'subject_code');
-
-        return view('timetables.create', compact('days', 'subjects', 'halls', 'timetables'));
+        return view('timetables.create', $this->formData());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        Timetable::create([
-            'user_id' => auth()->user()->id,
-            'day_id' => $request->day_id,
-            'subject_id' => $request->subject_id,
-            'hall_id' => $request->hall_id,
-            'time_from' => $request->time_from,
-            'time_to' => $request->time_to,
-        ]);
+        $data = $request->validate($this->rules());
+        $this->assertFree($data);
+        $data['user_id'] = $request->user()->id;
 
-        return redirect()->route('timetables.index')
-            ->with('success', 'Timetables created successfully.');
+        Timetable::create($data);
+
+        return redirect()->route('timetables.index')->with('success', 'Timetable entry created.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Timetable $timetable)
-    {
-        return view('timetables.show',compact('timetable'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Timetable $timetable)
     {
-        $days = Day::pluck('day_name', 'id');
-
-        $halls = Hall::pluck('lecture_hall_name', 'id');
-
-        $subjects = Subject::pluck('subject_name', 'id', 'subject_code');
-
-        return view('timetables.edit', compact('days', 'subjects', 'halls', 'timetable'));
+        return view('timetables.edit', ['timetable' => $timetable] + $this->formData());
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Timetable $timetable)
     {
-        $timetable->update($request->all());
+        $data = $request->validate($this->rules());
+        $this->assertFree($data, $timetable);
+        $timetable->update($data);
 
-        return redirect()->route('timetables.index')
-            ->with('success', 'Timetables updated successfully');
+        return redirect()->route('timetables.index')->with('success', 'Timetable entry updated.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Timetable $timetable)
     {
         $timetable->delete();
 
-        return redirect()->route('timetables.index')
-            ->with('success', 'Timetabe deleted successfully');
+        return redirect()->route('timetables.index')->with('success', 'Timetable entry deleted.');
     }
 
+    private function rules(): array
+    {
+        return [
+            'day_id' => ['required', 'exists:days,id'],
+            'subject_id' => ['required', 'exists:subjects,id'],
+            'hall_id' => ['required', 'exists:halls,id'],
+            'group_id' => ['nullable', 'exists:groups,id'],
+            'time_from' => ['required', 'date_format:H:i'],
+            'time_to' => ['required', 'date_format:H:i', 'after:time_from'],
+        ];
+    }
 
+    // shortcut: clash check is not transactional; upgrade to a DB constraint under concurrent writes.
+    private function assertFree(array $data, ?Timetable $ignore = null): void
+    {
+        $clash = Timetable::query()
+            ->where('day_id', $data['day_id'])
+            ->where('time_from', '<', $data['time_to'])
+            ->where('time_to', '>', $data['time_from'])
+            ->where(function ($query) use ($data) {
+                $query->where('hall_id', $data['hall_id']);
+
+                if (! empty($data['group_id'])) {
+                    $query->orWhere('group_id', $data['group_id']);
+                }
+            })
+            ->when($ignore, fn ($query) => $query->whereKeyNot($ignore->getKey()))
+            ->exists();
+
+        if ($clash) {
+            throw ValidationException::withMessages([
+                'time_from' => 'That hall or group is already booked for this time.',
+            ]);
+        }
+    }
+
+    private function formData(): array
+    {
+        return [
+            'days' => Day::orderBy('id')->pluck('day_name', 'id'),
+            'subjects' => Subject::orderBy('subject_code')->get()
+                ->mapWithKeys(fn ($subject) => [$subject->id => "{$subject->subject_code} — {$subject->subject_name}"]),
+            'halls' => Hall::orderBy('lecture_hall_name')->get()
+                ->mapWithKeys(fn ($hall) => [$hall->id => "{$hall->lecture_hall_name} — {$hall->lecture_hall_place}"]),
+            'groups' => Group::orderBy('name')->pluck('name', 'id'),
+        ];
+    }
 }

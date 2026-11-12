@@ -4,16 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Subject;
-use App\Models\Day;
-use App\Models\Hall;
-use App\Models\Group;
 
 class Timetable extends Model
 {
     use HasFactory;
 
-    public $table = 'timetables';
     protected $fillable = [
         'user_id',
         'subject_id',
@@ -24,24 +19,28 @@ class Timetable extends Model
         'time_to',
     ];
 
-    public function index()
+    public function user()
     {
-        $timetables = Timetable::with('day', 'subject', 'hall')
-        ->get();
-
-        
-        return view('timetables.index',compact('timetables'));
+        return $this->belongsTo(User::class);
     }
 
-    public function hall(){
-        return $this->belongsTo('App\Models\Hall', 'hall_id');
-    }
-
-    public function subject(){
+    public function subject()
+    {
         return $this->belongsTo(Subject::class);
     }
 
-    public function day(){
+    public function day()
+    {
         return $this->belongsTo(Day::class);
+    }
+
+    public function hall()
+    {
+        return $this->belongsTo(Hall::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
     }
 }
