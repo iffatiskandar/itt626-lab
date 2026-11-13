@@ -7,40 +7,41 @@
         <label class="field">
             <span>Name <b aria-hidden="true">*</b></span>
             <input name="name" value="{{ old('name', $studentRecord?->name) }}" required autocomplete="name">
-            @error('name') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('name') }}</em>
         </label>
 
         <label class="field">
             <span>Age</span>
             <input type="number" name="age" min="1" max="150" value="{{ old('age', $studentRecord?->age) }}">
-            @error('age') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('age') }}</em>
         </label>
 
         <label class="field">
             <span>Email <b aria-hidden="true">*</b></span>
             <input type="email" name="email" value="{{ old('email', $studentRecord?->email) }}" required
                 autocomplete="email">
-            @error('email') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('email') }}</em>
         </label>
 
         <label class="field">
             <span>Phone</span>
             <input name="phone_number" value="{{ old('phone_number', $studentRecord?->phone_number) }}"
                 autocomplete="tel">
-            @error('phone_number') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('phone_number') }}</em>
         </label>
 
         <label class="field">
-            <span>Password {{ $studentRecord ? '(leave blank to keep)' : '' }} @if (!$studentRecord) <b
-            aria-hidden="true">*</b> @endif</span>
+            <span>
+                Password @if ($studentRecord) (leave blank to keep) @else <b aria-hidden="true">*</b> @endif
+            </span>
             <input type="password" name="password" @if (!$studentRecord) required @endif autocomplete="new-password">
-            @error('password') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('password') }}</em>
         </label>
 
         <label class="field">
             <span>Address</span>
             <textarea name="address">{{ old('address', $studentRecord?->address) }}</textarea>
-            @error('address') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('address') }}</em>
         </label>
     </div>
 

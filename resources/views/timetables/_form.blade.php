@@ -12,7 +12,7 @@
                     <option value="{{ $id }}" @selected(old('day_id', $entry?->day_id) == $id)>{{ $name }}</option>
                 @endforeach
             </select>
-            @error('day_id') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('day_id') }}</em>
         </label>
 
         <label class="field">
@@ -23,7 +23,7 @@
                     <option value="{{ $id }}" @selected(old('subject_id', $entry?->subject_id) == $id)>{{ $name }}</option>
                 @endforeach
             </select>
-            @error('subject_id') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('subject_id') }}</em>
         </label>
 
         <label class="field">
@@ -34,7 +34,7 @@
                     <option value="{{ $id }}" @selected(old('hall_id', $entry?->hall_id) == $id)>{{ $name }}</option>
                 @endforeach
             </select>
-            @error('hall_id') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('hall_id') }}</em>
         </label>
 
         <label class="field">
@@ -45,19 +45,19 @@
                     <option value="{{ $id }}" @selected(old('group_id', $entry?->group_id) == $id)>{{ $name }}</option>
                 @endforeach
             </select>
-            @error('group_id') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('group_id') }}</em>
         </label>
 
         <label class="field">
             <span>From <b aria-hidden="true">*</b></span>
             <input type="time" name="time_from" value="{{ old('time_from', $entry?->time_from) }}" required>
-            @error('time_from') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('time_from') }}</em>
         </label>
 
         <label class="field">
             <span>To <b aria-hidden="true">*</b></span>
             <input type="time" name="time_to" value="{{ old('time_to', $entry?->time_to) }}" required>
-            @error('time_to') <em class="error">{{ $message }}</em> @enderror
+            <em class="error">{{ $errors->first('time_to') }}</em>
         </label>
     </div>
 

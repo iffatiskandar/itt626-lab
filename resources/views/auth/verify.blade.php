@@ -1,28 +1,27 @@
 @extends('layouts.app')
 
+@section('title', 'Verify email')
+
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Verify Your Email Address') }}</div>
+  <section class="auth-card">
+    <p class="mono">ITT626 · Timetable</p>
+    <h1>Verify your email</h1>
 
-                <div class="card-body">
-                    @if (session('resent'))
-                        <div class="alert alert-success" role="alert">
-                            {{ __('A fresh verification link has been sent to your email address.') }}
-                        </div>
-                    @endif
+    @if (session('resent'))
+      <div class="alert" role="status">A fresh verification link has been sent to your email address.</div>
+    @endif
 
-                    {{ __('Before proceeding, please check your email for a verification link.') }}
-                    {{ __('If you did not receive the email') }},
-                    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('click here to request another') }}</button>.
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <p class="auth-lede">Check your email for a verification link. If you did not receive it, request another below.</p>
+
+    <form class="form" method="POST" action="{{ route('verification.resend') }}">
+      @csrf
+      <div class="actions">
+        <button class="btn" type="submit">Send a new link</button>
+      </div>
+    </form>
+
+    <p class="auth-foot">
+      <a href="{{ route('home') }}">Continue to dashboard</a>
+    </p>
+  </section>
 @endsection

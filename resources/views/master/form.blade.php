@@ -25,7 +25,7 @@
                     <input type="{{ $field['type'] ?? 'text' }}" name="{{ $field['name'] }}"
                         value="{{ old($field['name'], $record?->{$field['name']} ?? '') }}" @if ($field['required'] ?? false)
                         required @endif>
-                    @error($field['name']) <em class="error">{{ $message }}</em> @enderror
+                    <em class="error">{{ $errors->first($field['name']) }}</em>
                 </label>
             @endforeach
         </div>

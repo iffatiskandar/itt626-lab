@@ -82,11 +82,11 @@ class TimetableController extends Controller
             ->where(function ($query) use ($data) {
                 $query->where('hall_id', $data['hall_id']);
 
-                if (! empty($data['group_id'])) {
+                if (!empty($data['group_id'])) {
                     $query->orWhere('group_id', $data['group_id']);
                 }
             })
-            ->when($ignore, fn ($query) => $query->whereKeyNot($ignore->getKey()))
+            ->when($ignore, fn($query) => $query->whereKeyNot($ignore->getKey()))
             ->exists();
 
         if ($clash) {
@@ -101,9 +101,9 @@ class TimetableController extends Controller
         return [
             'days' => Day::orderBy('id')->pluck('day_name', 'id'),
             'subjects' => Subject::orderBy('subject_code')->get()
-                ->mapWithKeys(fn ($subject) => [$subject->id => "{$subject->subject_code} — {$subject->subject_name}"]),
+                ->mapWithKeys(fn($subject) => [$subject->id => "{$subject->subject_code} — {$subject->subject_name}"]),
             'halls' => Hall::orderBy('lecture_hall_name')->get()
-                ->mapWithKeys(fn ($hall) => [$hall->id => "{$hall->lecture_hall_name} — {$hall->lecture_hall_place}"]),
+                ->mapWithKeys(fn($hall) => [$hall->id => "{$hall->lecture_hall_name} — {$hall->lecture_hall_place}"]),
             'groups' => Group::orderBy('name')->pluck('name', 'id'),
         ];
     }
