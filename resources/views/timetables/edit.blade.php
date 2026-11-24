@@ -11,4 +11,12 @@
     </div>
 
     @include('timetables._form', ['entry' => $timetable])
+
+    <form class="actions" method="POST" action="{{ route('timetables.destroy', $timetable) }}"
+        onsubmit="return confirm('Delete this entry?')">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-danger" type="submit">Delete entry</button>
+    </form>
+
 @endsection

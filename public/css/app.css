@@ -2,6 +2,7 @@
  * theme: Cobalt · paper oklch(98.5% 0.004 250) · accent oklch(58% 0.20 256)
  * display: Space Grotesk · body: Inter · mono: JetBrains Mono
  * pre-emit critique: P5 H5 E4 S5 R5 V4
+ * board: weekly grid (timetable)
  */
 :root {
     --paper: oklch(98.5% 0.004 250);
@@ -310,75 +311,121 @@ h2 {
     overflow-wrap: anywhere;
 }
 
-/* Weekly timetable */
-.week {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
-    gap: var(--space-4);
+/* Weekly timetable board — day rows, time columns */
+.timetable {
+    width: 100%;
+    min-width: 44rem;
+    border-collapse: separate;
+    /* separate keeps borders on the sticky day column */
+    border-spacing: 0;
+    font-size: .85rem;
 }
 
-.day {
-    min-width: 0;
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-lg);
-}
-
-.day h2 {
-    padding: .8rem 1rem;
+.timetable th,
+.timetable td {
+    padding: 0;
+    border-right: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
-    font-size: .95rem;
+    text-align: left;
+    vertical-align: top;
 }
 
-.slot {
-    display: flex;
-    flex-direction: column;
-    gap: .25rem;
-    padding: 1rem;
-    border-bottom: 1px solid var(--rule);
+.timetable tr>*:last-child {
+    border-right: 0;
 }
 
-.slot:last-child {
+.timetable tbody tr:last-child>* {
     border-bottom: 0;
 }
 
-.slot time {
-    font: 500 .75rem/1.4 var(--font-mono);
-    color: var(--accent);
+.timetable thead th {
+    padding: .55rem .6rem;
+    background: var(--paper-2);
+    color: var(--muted);
+    font: 500 .66rem/1.4 var(--font-mono);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+/* day axis stays put while the time columns scroll sideways on narrow screens */
+.timetable thead th:first-child,
+.timetable tbody th {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    width: 6.5rem;
+    background: var(--paper-2);
+}
+
+.timetable tbody th {
+    padding: .55rem .6rem;
+    border-right: 1px solid var(--rule-strong);
+    font: 600 .9rem/1.3 var(--font-display);
+    letter-spacing: -.01em;
+}
+
+/* ink on accent-soft = 11.6:1; only the header cell is tinted so muted cell text keeps 5.27:1 */
+.timetable tr.is-today th {
+    background: var(--accent-soft);
+    color: var(--ink);
+}
+
+.day-flag {
+    display: block;
+    margin-top: .2rem;
+    color: var(--ink);
+    font: 500 .62rem/1.4 var(--font-mono);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.slot {
+    display: block;
+    margin: .25rem;
+    padding: .4rem .5rem;
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: inset 0 0 0 1px transparent;
+    transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.slot:hover {
+    background: var(--paper);
+    box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.slot:active {
+    transform: translateY(1px);
 }
 
 .slot strong {
-    font-family: var(--font-display);
-    font-size: 1rem;
+    display: block;
+    font: 600 .82rem/1.25 var(--font-display);
 }
 
-.slot span {
+.slot-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin-top: .1rem;
     color: var(--muted);
-    font-size: .82rem;
+    font-size: .76rem;
+    line-height: 1.35;
     overflow-wrap: anywhere;
 }
 
-.slot-actions {
-    display: flex;
-    gap: .75rem;
-    margin-top: .5rem;
-    font-size: .8rem;
+.slot-meta {
+    display: block;
+    margin-top: .25rem;
+    color: var(--muted);
+    font: 400 .68rem/1.35 var(--font-mono);
 }
 
-.slot-actions form {
-    display: inline;
-}
-
-.slot-actions button {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--danger);
-    font: inherit;
-    text-decoration: underline;
-    text-underline-offset: .2em;
-    cursor: pointer;
-}
 
 /* Forms */
 .form {
@@ -573,7 +620,7 @@ tbody tr:hover {
 /* numbers line up: stats, times, dates, table figures */
 .stat strong,
 .entry time,
-.slot time,
+.timetable thead th,
 td {
     font-variant-numeric: tabular-nums;
 }
@@ -702,6 +749,27 @@ td {
     .shell {
         grid-template-columns: minmax(0, 1fr);
     }
+
+    .timetable {
+        min-width: 36rem;
+        font-size: .8rem;
+    }
+
+    .timetable thead th:first-child,
+    .timetable tbody th {
+        width: 5rem;
+    }
+
+    .timetable thead th {
+        padding: .45rem .5rem;
+        font-size: .6rem;
+    }
+
+    .slot {
+        margin: .15rem;
+        padding: .3rem .4rem;
+    }
+
 
     .sidebar {
         position: static;

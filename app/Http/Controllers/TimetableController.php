@@ -14,14 +14,56 @@ class TimetableController extends Controller
 {
     public function index()
     {
+        $entries = Timetable::with(['subject', 'hall', 'group'])
+            ->orderBy('time_from')
+            ->get();
+
+        // every distinct start/end time becomes a column boundary
+        $bounds = $entries
+            ->flatMap(fn($entry) => [$entry->time_from, $entry->time_to])
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        $position = $bounds->flip(); // "08:30" => 1
+
+        $columns = $bounds->sliding(2)
+            ->map(fn($pair) => [
+                'from' => substr($pair->first(), 0, 5),
+                'to' => substr($pair->last(), 0, 5),
+            ])
+            ->toArray();
+
+        // entry => the column it starts in, and how many columns it covers
+        $cells = $entries->groupBy('day_id')->map(fn($day) => $day
+            ->map(fn($entry) => [
+                'entry' => $entry,
+                'start' => $position[$entry->time_from],
+                'span' => max(1, $position[$entry->time_to] - $position[$entry->time_from]),
+            ])
+            ->groupBy('start'));
+
         return view('timetables.index', [
-            'days' => Day::orderBy('id')->get(),
-            'timetables' => Timetable::with(['subject', 'hall', 'group', 'user'])
-                ->orderBy('time_from')
-                ->get()
-                ->groupBy('day_id'),
+            'columns' => $columns,
+            // each row is a day plus one cell per column, in order
+            'rows' => Day::orderBy('id')->get()->map(function ($day) use ($cells, $columns) {
+                $dayCells = $cells[$day->id] ?? collect();
+                $row = [];
+
+                for ($i = 0; $i < count($columns); $i += $span) {
+                    $span = $dayCells->has($i) ? (int) $dayCells[$i]->max('span') : 1;
+                    $row[] = [
+                        'span' => $span,
+                        'entries' => $dayCells->has($i) ? $dayCells[$i]->pluck('entry') : collect(),
+                    ];
+                }
+
+                return ['day' => $day, 'cells' => $row];
+            }),
         ]);
     }
+
 
     public function create()
     {
