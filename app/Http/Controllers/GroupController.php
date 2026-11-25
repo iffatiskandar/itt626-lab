@@ -19,6 +19,16 @@ class GroupController extends Controller
         ]);
     }
 
+    public function show(Group $group)
+    {
+        return view('master.show', [
+            'title' => 'Group details',
+            'route' => 'groups',
+            'columns' => ['name' => 'Group', 'part' => 'Part'],
+            'record' => $group,
+        ]);
+    }
+
     public function create()
     {
         return $this->form();

@@ -19,6 +19,17 @@ class SubjectController extends Controller
         ]);
     }
 
+    public function show(Subject $subject)
+    {
+        return view('master.show', [
+            'title' => 'Subject details',
+            'route' => 'subjects',
+            'columns' => ['subject_code' => 'Code', 'subject_name' => 'Subject', 'lecturer_name' => 'Lecturer'],
+            'record' => $subject,
+        ]);
+    }
+
+
     public function create()
     {
         return $this->form();

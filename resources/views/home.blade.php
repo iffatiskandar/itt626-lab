@@ -37,7 +37,10 @@
             @if ($entry->group) · {{ $entry->group->name }} @endif
           </span>
         </div>
-        <a class="btn btn-small" href="{{ route('timetables.edit', $entry) }}">Edit</a>
+        <div class="row-actions">
+          <a class="btn btn-small" href="{{ route('timetables.show', $entry) }}">Show</a>
+          <a class="btn btn-small" href="{{ route('timetables.edit', $entry) }}">Edit</a>
+        </div>
       </article>
     @empty
       <p class="empty">No classes scheduled today.</p>

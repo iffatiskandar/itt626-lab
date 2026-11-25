@@ -14,6 +14,11 @@ class StudentController extends Controller
         return view('students.index', ['students' => User::orderBy('name')->get()]);
     }
 
+    public function show(User $student)
+    {
+        return view('students.show', compact('student'));
+    }
+
     public function create()
     {
         return view('students.create');

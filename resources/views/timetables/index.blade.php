@@ -42,6 +42,7 @@
                                     @foreach ($cell['entries'] as $entry)
                                         <a class="slot" href="{{ route('timetables.edit', $entry) }}"
                                             aria-label="Edit {{ $entry->subject?->subject_code ?? 'entry' }} on {{ $row['day']->day_name }} at {{ substr($entry->time_from, 0, 5) }}">
+
                                             <strong>{{ $entry->subject?->subject_code ?? '—' }}</strong>
                                             <span class="slot-name">{{ $entry->subject?->subject_name ?? 'Untitled' }}</span>
                                             <span class="slot-meta">{{ $entry->hall?->lecture_hall_name ?? '—' }}@if ($entry->group) ·

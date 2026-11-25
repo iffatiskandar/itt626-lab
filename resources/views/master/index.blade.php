@@ -29,6 +29,7 @@
                         @endforeach
                         <td>
                             <div class="row-actions">
+                                <a class="btn btn-small" href="{{ route($route . '.show', $row) }}">Show</a>
                                 <a class="btn btn-small" href="{{ route($route . '.edit', $row) }}">Edit</a>
                                 <form method="POST" action="{{ route($route . '.destroy', $row) }}"
                                     onsubmit="return confirm('Delete this record?')">

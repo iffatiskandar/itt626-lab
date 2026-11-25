@@ -16,10 +16,10 @@ Auth::routes();
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    Route::resource('students', StudentController::class)->except('show');
-    Route::resource('timetables', TimetableController::class)->except('show');
-    Route::resource('subjects', SubjectController::class)->except('show');
-    Route::resource('halls', HallController::class)->except('show');
-    Route::resource('days', DayController::class)->except('show');
-    Route::resource('groups', GroupController::class)->except('show');
+    Route::resource('students', StudentController::class);
+    Route::resource('timetables', TimetableController::class);
+    Route::resource('subjects', SubjectController::class);
+    Route::resource('halls', HallController::class);
+    Route::resource('days', DayController::class);
+    Route::resource('groups', GroupController::class);
 });

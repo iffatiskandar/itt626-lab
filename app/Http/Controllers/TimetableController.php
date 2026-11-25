@@ -64,6 +64,13 @@ class TimetableController extends Controller
         ]);
     }
 
+    public function show(Timetable $timetable)
+    {
+        return view('timetables.show', [
+            'timetable' => $timetable->load(['subject', 'hall', 'group', 'day', 'user']),
+        ]);
+    }
+
 
     public function create()
     {

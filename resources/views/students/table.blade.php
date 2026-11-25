@@ -18,6 +18,7 @@
                     <td>{{ $student->created_at?->format('d M Y') ?? '—' }}</td>
                     <td>
                         <div class="row-actions">
+                                                        <a class="btn btn-small" href="{{ route('students.show', $student) }}">Show</a>
                             <a class="btn btn-small" href="{{ route('students.edit', $student) }}">Edit</a>
                             <form method="POST" action="{{ route('students.destroy', $student) }}"
                                 onsubmit="return confirm('Delete this student and login?')">

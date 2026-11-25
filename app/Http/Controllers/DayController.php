@@ -19,6 +19,16 @@ class DayController extends Controller
         ]);
     }
 
+    public function show(Day $day)
+    {
+        return view('master.show', [
+            'title' => 'Day details',
+            'route' => 'days',
+            'columns' => ['day_name' => 'Day'],
+            'record' => $day,
+        ]);
+    }
+
     public function create()
     {
         return $this->form();

@@ -19,6 +19,17 @@ class HallController extends Controller
         ]);
     }
 
+    public function show(Hall $hall)
+    {
+        return view('master.show', [
+            'title' => 'Hall details',
+            'route' => 'halls',
+            'columns' => ['lecture_hall_name' => 'Code', 'lecture_hall_place' => 'Place'],
+            'record' => $hall,
+        ]);
+    }
+
+
     public function create()
     {
         return $this->form();
